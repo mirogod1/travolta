@@ -3,28 +3,31 @@
 
     <section>
       <fieldset>
-        <div class="form-group">
-          <label for="destination">Destination
-          </label>
-          <input type="text" name="destination" v-model="destination" id="">
+        <div class="fields-wrapper">
+          <div class="form-group">
+            <label for="destination">Destination
+            </label>
+            <v-autocomplete :items="destinationsSugest" variant="solo" v-model="destination"></v-autocomplete>
+          </div>
+          <div class="form-group">
+            <label for="">Check-in</label>
+            <VueDatePicker v-model="checkInDate" :start-date="today" :placeholder="today.toDateString()"></VueDatePicker>
+          </div>
+          <div class="form-group">
+            <label for="">Check-out</label>
+            <VueDatePicker v-model="checkOutDate" :start-date="today" :placeholder="today.toDateString()"></VueDatePicker>
+          </div>
+          <div class="form-group">
+            <label for="">Adults</label>
+            <input type="number" v-model="adultsCount" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label for="">Children</label>
+            <input type="number" v-model="childrenCount" placeholder="0">
+          </div>
+          <button class="search-btn" @click="search()">Search</button>
         </div>
-        <div class="form-group">
-          <label for="">Check-in</label>
-          <VueDatePicker v-model="checkInDate" :start-date="today" :placeholder="today.toDateString()"></VueDatePicker>
-        </div>
-        <div class="form-group">
-          <label for="">Check-out</label>
-          <VueDatePicker v-model="checkOutDate" :start-date="today" :placeholder="today.toDateString()"></VueDatePicker>
-        </div>
-        <div class="form-group">
-          <label for="">Adults</label>
-          <input type="number" v-model="adultsCount">
-        </div>
-        <div class="form-group">
-          <label for="">Children</label>
-          <input type="number" v-model="childrenCount">
-        </div>
-        <button class="search-btn">Search</button>
+        <div class="error-message" v-if="errorMessage">{{ errorMessage }}</div>
       </fieldset>
     </section>
     <section class="align-left">
@@ -43,26 +46,65 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import VueDatePicker from '@vuepic/vue-datepicker'
+<script lang="ts" setup scoped>
+import destinations from '../../public/data/destinations.json'
+import 'vuetify/styles'
 import '@vuepic/vue-datepicker/dist/main.css'
-import { computed, ref } from 'vue'
+import VueDatePicker from '@vuepic/vue-datepicker'
+import { computed, onBeforeMount, onMounted, ref } from 'vue'
 
-const destination = ref(null)
 const checkInDate = ref(null)
 const checkOutDate = ref(null)
-const adultsCount = ref(null)
-const childrenCount = ref(null)
+const destination = ref('')
+const adultsCount = ref(0)
+const childrenCount = ref(0)
+const errorMessage = ref('')
+const destinationsSugest = computed(() => {
+  return Array.from(new Set(destinations.map(x => x.name)))
+})
 
 const today = computed(() => { return new Date(Date.now()) })
+
+const validateForm = () => {
+  errorMessage.value = ''
+  const allHaveValue = (destination.value !== '' && checkInDate.value !== null &&
+    checkOutDate.value !== null &&
+    adultsCount.value > 0 &&
+    childrenCount.value >= 0)
+  if (allHaveValue) {
+    if (checkInDate.value! >= checkOutDate.value!) {
+      errorMessage.value = 'Check-out date must be bigger than check-in date.'
+    }
+  } else {
+    errorMessage.value = 'Not all filds have value.'
+  }
+  const result = allHaveValue
+  return result
+}
+
+const search = () => {
+  const isValidForm = validateForm()
+  console.log(isValidForm)
+}
 </script>
 <style lang="scss">
 fieldset {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
   background-color: white;
-  padding-top: 10px;
+  padding: 10px 5px;
+  margin-bottom: 30px;
+
+  .fields-wrapper {
+    display: flex;
+    justify-content: space-around;
+    align-items: end;
+    margin-bottom: 10px;
+  }
+
+  .error-message {
+    text-align: left;
+    color: red;
+    padding-left: 20px;
+  }
 }
 
 .search-btn {
@@ -71,13 +113,15 @@ fieldset {
   height: 35px;
   border-radius: 5px;
   box-sizing: border-box;
-
+  padding: 0 5px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   justify-items: start;
+  min-width: 15%;
+  max-width: 250px;
 
   input {
     border: 1px solid black;
@@ -96,5 +140,18 @@ fieldset {
 
 .align-left {
   text-align: left;
+}
+
+.v-field__append-inner,
+.v-input__details {
+  display: none !important;
+}
+
+.v-field--appended {
+  padding-inline-end: 0 !important;
+}
+
+.v-field__input {
+  padding: 0 !important;
 }
 </style>
