@@ -46,12 +46,14 @@
   </div>
 </template>
 
-<script lang="ts" setup scoped>
+<script lang="ts" setup>
 import destinations from '../../public/data/destinations.json'
 import 'vuetify/styles'
 import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
-import { computed, onBeforeMount, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
+import store from '@/store'
+import router from '@/router'
 
 const checkInDate = ref(null)
 const checkOutDate = ref(null)
@@ -74,17 +76,27 @@ const validateForm = () => {
   if (allHaveValue) {
     if (checkInDate.value! >= checkOutDate.value!) {
       errorMessage.value = 'Check-out date must be bigger than check-in date.'
+      return false
     }
   } else {
     errorMessage.value = 'Not all filds have value.'
+    return false
   }
-  const result = allHaveValue
-  return result
+  return true
 }
-
+const saveToStore = () => {
+  store.commit('setDestination', destination)
+  store.commit('setCheckInDate', checkInDate)
+  store.commit('setCheckOutDate', checkOutDate)
+  store.commit('setAdultsCount', adultsCount)
+  store.commit('setChildrenCount', childrenCount)
+}
 const search = () => {
   const isValidForm = validateForm()
-  console.log(isValidForm)
+  if (isValidForm) {
+    saveToStore()
+    router.push({ name: 'hotels' })
+  }
 }
 </script>
 <style lang="scss">
