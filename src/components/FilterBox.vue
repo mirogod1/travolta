@@ -57,4 +57,10 @@ watch(hotelNameFilter, () => {
 input {
   background: white;
 }
+
+@media(max-width:660px) {
+  .filters-container {
+    display: none;
+  }
+}
 </style>

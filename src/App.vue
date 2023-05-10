@@ -1,16 +1,18 @@
 <template>
   <header>
     <div class="heading flex-center">
-      <div class="logo-text flex-center">
-        <div class="logo flex-center">🕺🏻</div>
-        <span>
-          TRAVOLTA
-        </span>
-      </div>
+      <router-link class="nav-button" to="/">
+        <div class="logo-text flex-center">
+          <div class="logo flex-center">🕺🏻</div>
+          <span>
+            TRAVOLTA
+          </span>
+        </div>
+      </router-link>
       <nav>
         <router-link class="nav-button" to="/about">About Us</router-link>
-        <router-link class="nav-button" to="/">My Bookings</router-link>
-        <router-link class="nav-button" to="/">Sign-in</router-link>
+        <router-link class="nav-button" to="/a">My Bookings</router-link>
+        <router-link class="nav-button" to="/d">Sign-in</router-link>
       </nav>
     </div>
   </header>
@@ -39,6 +41,12 @@ body {
 
 .heading {
   justify-content: space-between;
+  margin-bottom: 15px;
+
+  .nav-button {
+    text-decoration: none;
+    color: inherit;
+  }
 
   nav {
     padding: 30px;

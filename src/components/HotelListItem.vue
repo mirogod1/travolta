@@ -14,6 +14,7 @@
         {{ hotel.address }}
       </div>
     </div>
+    <button class="show-details">Show Details</button>
   </div>
 </template>
 <script lang="ts" setup>
@@ -48,6 +49,20 @@ defineProps({
   width: 80px;
   height: 80px;
   border: 1px solid black;
+}
 
+.show-details {
+  background-color: fuchsia;
+  padding: 5px;
+  color: white;
+  border-radius: 10px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+@media(max-width:660px) {
+  .show-details {
+    display: none;
+  }
 }
 </style>

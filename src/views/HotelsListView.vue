@@ -17,8 +17,6 @@ const setRatingsFilter = (event: number) => {
   ratingFilter.value = event
 }
 const setNameFilter = (event: string) => {
-  console.log('setNameFilter ' + event)
-
   nameFilter.value = event
 }
 </script>

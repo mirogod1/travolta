@@ -17,14 +17,16 @@
             <label for="">Check-out</label>
             <VueDatePicker v-model="checkOutDate" :start-date="today" :placeholder="today.toDateString()"></VueDatePicker>
           </div>
-          <div class="form-group">
+
+          <div class="form-group number">
             <label for="">Adults</label>
             <input type="number" v-model="adultsCount" placeholder="0">
           </div>
-          <div class="form-group">
+          <div class="form-group number">
             <label for="">Children</label>
             <input type="number" v-model="childrenCount" placeholder="0">
           </div>
+
           <button class="search-btn" @click="search()">Search</button>
         </div>
         <div class="error-message" v-if="errorMessage">{{ errorMessage }}</div>
@@ -51,12 +53,12 @@ import destinations from '../../public/data/destinations.json'
 import 'vuetify/styles'
 import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import store from '@/store'
 import router from '@/router'
 
-const checkInDate = ref(null)
-const checkOutDate = ref(null)
+const checkInDate = ref(new Date())
+const checkOutDate = ref(new Date())
 const destination = ref('')
 const adultsCount = ref(0)
 const childrenCount = ref(0)
@@ -85,16 +87,24 @@ const validateForm = () => {
   return true
 }
 const saveToStore = () => {
-  store.commit('setDestination', destination)
-  store.commit('setCheckInDate', checkInDate)
-  store.commit('setCheckOutDate', checkOutDate)
-  store.commit('setAdultsCount', adultsCount)
-  store.commit('setChildrenCount', childrenCount)
+  store.commit('setDestination', destination.value)
+  store.commit('setCheckInDate', checkInDate.value)
+  store.commit('setCheckOutDate', checkOutDate.value)
+  store.commit('setAdultsCount', adultsCount.value)
+  store.commit('setChildrenCount', childrenCount.value)
+}
+const saveToLocalStorage = () => {
+  localStorage.setItem('destination', destination.value)
+  localStorage.setItem('checkInDate', checkInDate.value.toDateString())
+  localStorage.setItem('checkOutDate', checkOutDate.value.toDateString())
+  localStorage.setItem('adultsCount', adultsCount.value.toString())
+  localStorage.setItem('childrenCount', childrenCount.value.toString())
 }
 const search = () => {
   const isValidForm = validateForm()
   if (isValidForm) {
     saveToStore()
+    saveToLocalStorage()
     router.push({ name: 'hotels' })
   }
 }
@@ -107,7 +117,7 @@ fieldset {
 
   .fields-wrapper {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: end;
     margin-bottom: 10px;
   }
@@ -133,12 +143,16 @@ fieldset {
   flex-direction: column;
   justify-items: start;
   min-width: 15%;
-  max-width: 250px;
 
   input {
     border: 1px solid black;
     height: 30px;
     border-radius: 5px;
+
+    &[type='number'] {
+      min-width: 50px;
+      width: auto;
+    }
   }
 
   label {
@@ -165,5 +179,31 @@ fieldset {
 
 .v-field__input {
   padding: 0 !important;
+}
+
+@media (max-width: 660px) {
+  nav {
+    display: none;
+  }
+
+  .fields-wrapper {
+    //flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .form-group {
+      width: 100%;
+      margin-bottom: 10px;
+
+      &.number {
+        width: 50%;
+        max-width: 100px;
+      }
+    }
+
+    .search-btn {
+      width: 100%;
+    }
+  }
 }
 </style>
