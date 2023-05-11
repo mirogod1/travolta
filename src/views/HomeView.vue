@@ -108,6 +108,20 @@ const search = () => {
     router.push({ name: 'hotels' })
   }
 }
+
+const getStorageDate = (key: string) => {
+  const storageVal = localStorage.getItem(key)
+  if (!storageVal) { return }
+  return new Date(Date.parse(storageVal))
+}
+
+onMounted(() => {
+  checkInDate.value = getStorageDate('checkInDate') ?? new Date()
+  checkOutDate.value = getStorageDate('checkOutDate') ?? new Date()
+  destination.value = localStorage.getItem('destination') ?? ''
+  adultsCount.value = +(localStorage.getItem('adultsCount') ?? 0)
+  childrenCount.value = +(localStorage.getItem('childrenCount') ?? 0)
+})
 </script>
 <style lang="scss">
 fieldset {
